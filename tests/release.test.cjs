@@ -95,7 +95,8 @@ test("the actual release validates with only relative assets and valid notes", (
   assert.ok(
     !/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(
       [...contents]
-        .filter(([name]) => name.endsWith(".js"))
+        // Check the runtime scripts, not phrases in the author's notes.
+        .filter(([name]) => name.startsWith("js/") && name.endsWith(".js"))
         .map(([, bytes]) => bytes.toString("utf8"))
         .join("\n"),
     ),

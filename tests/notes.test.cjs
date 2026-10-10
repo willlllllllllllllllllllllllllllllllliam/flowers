@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const test = require("node:test");
+const { validateNotes } = require("../tools/stage.cjs");
 const root = path.resolve(__dirname, "..");
 const originalMessages = [
   "If you ask me, I bet they'd probably really like it if you do.",
@@ -118,14 +119,22 @@ function fixture(
   };
 }
 
-test("notes.js preserves the exact two original examples in oldest-first order", () => {
+test("editable notes.js contains valid notes and shows its newest message first", () => {
+  const source = fs.readFileSync(path.join(root, "notes.js"), "utf8");
+  validateNotes(source);
   const context = vm.createContext({ window: {} });
-  vm.runInContext(
-    fs.readFileSync(path.join(root, "notes.js"), "utf8"),
-    context,
-  );
+  vm.runInContext(source, context);
   const notes = JSON.parse(JSON.stringify(context.window.FLOWERS_NOTES));
-  assert.deepEqual(notes, { to: "", from: "", messages: originalMessages });
+  const h = fixture(notes);
+  const normalize = (text) => text.replace(/\r\n?/g, "\n");
+  assert.equal(h.api.getState().error, null);
+  assert.equal(
+    h.byId("note-text").textContent,
+    normalize(notes.messages.at(-1)),
+  );
+  assert.equal(h.byId("note-to").textContent, normalize(notes.to));
+  assert.equal(h.byId("note-from").textContent, normalize(notes.from));
+  assert.equal(h.byId("note-nav").hidden, notes.messages.length < 2);
 });
 
 test("the newest note appears first and both arrows wrap without a new garden", () => {
