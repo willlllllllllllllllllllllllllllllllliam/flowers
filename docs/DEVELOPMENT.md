@@ -189,18 +189,13 @@ Keep the release output allowlist narrow.
 ## Preserve V1
 
 The original V1 tip is commit `24a513678619f823cb377d0260853dd6ea9c6aa4`.
-The local `flowers-v1` tag marks that commit. The release branch continues from V1, so the old files remain in its ancestry.
+The [`flowers-v1` tag](https://github.com/willlllllllllllllllllllllllllllllllliam/flowers/tree/flowers-v1) marks that commit.
+V2 continues from V1, so the old files remain in its ancestry.
 Existing forks retain their own files and history when this repository receives an update.
 
 Do not replace the repository or rewrite its history. Do not force-push a new root commit.
+Keep the `flowers-v1` tag at the original commit. Do not move or delete the tag.
 Retain the original license and tutorial credits.
-
-The local tag does not appear on GitHub until a maintainer publishes it.
-Publish that exact tag with the approved V2 release. Do not use a broad command that pushes every local tag.
-After publication, verify that GitHub shows the tag at the original commit.
-
-The [live demo](https://willlllllllllllllllllllllllllllllllliam.github.io/flowers/) shows V1 until the V2 release deploys.
-Verify that the demo shows V2 after the release.
 
 For a separate local V1 checkout, use:
 
