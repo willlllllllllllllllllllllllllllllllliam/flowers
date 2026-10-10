@@ -1,0 +1,25 @@
+Walkway SemiBold - author notice and provenance
+
+Author: Graham Meade, GemFonts / Typotheticals
+Original filename: Walkway SemiBold.ttf
+Project filename: Walkway-SemiBold.ttf
+The project preserves the original font bytes.
+SHA-256: 6f460ea91f2a9af10b0ad9019fb5792168d73ab039c2f947e7266eafd5b3de22
+
+The author's DaFont listing describes Walkway as "100% Free".
+On October 21, 2021, the author posted this statement:
+
+"To all
+This font is free for all commercial uses
+Graham Meade."
+
+Sources checked on October 9, 2026:
+https://www.dafont.com/walkway.font
+https://www.dafont.com/font-comment.php?file=walkway
+https://dl.dafont.com/dl/?f=walkway
+
+The source archive contains 31 font files, with no separate license document.
+This file records the source and the author's statement. It does not create
+a new license or assign the Flowers MIT license to the font.
+The statement does not specify separate terms for font modification or
+redistribution. Confirm those rights with the author for uses that require them.

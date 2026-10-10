@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Flowers - garden review</title>
+    <link rel="stylesheet" href="review.css" />
+    <script defer src="../js/gardens.js"></script>
+    <script defer src="review.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside>
+        <p class="eyebrow">Development only</p>
+        <h1>Flowers / garden review</h1>
+        <p>Inspect the actual site with a fixed garden and viewport.</p>
+        <ol
+          id="scene-list"
+          class="scene-list"
+          aria-label="Garden compositions"
+        ></ol>
+        <a class="site-link" href="../index.html" target="_blank" rel="noopener"
+          >Open the normal site ↗</a
+        >
+      </aside>
+
+      <main>
+        <div class="toolbar" aria-label="Preview settings">
+          <label
+            >Viewport
+            <select id="viewport">
+              <option value="1440x900">Desktop - 1440 × 900</option>
+              <option value="1366x768">Laptop - 1366 × 768</option>
+              <option value="390x844">Phone - 390 × 844</option>
+              <option value="390x667">Short phone - 390 × 667</option>
+              <option value="320x568">Small phone - 320 × 568</option>
+              <option value="844x390">Phone landscape - 844 × 390</option>
+            </select>
+          </label>
+          <label
+            >Scale
+            <select id="scale">
+              <option value="fit">Fit</option>
+              <option value="1">100%</option>
+              <option value="0.75">75%</option>
+              <option value="0.5">50%</option>
+            </select>
+          </label>
+          <label
+            >Notes
+            <select id="fixture">
+              <option value="current">Current notes.js</option>
+              <option value="long">Long note</option>
+              <option value="unbroken">Unbroken text</option>
+            </select>
+          </label>
+          <label
+            >Recipient and signature
+            <select id="greetings">
+              <option value="current">Use current values</option>
+              <option value="hidden">Hide both</option>
+              <option value="named">Show example names</option>
+            </select>
+          </label>
+          <label
+            >Theme
+            <select id="theme">
+              <option value="light">Day</option>
+              <option value="dark">Night</option>
+            </select>
+          </label>
+          <label
+            >Motion
+            <select id="motion">
+              <option value="normal">Use browser preference</option>
+              <option value="reduced">Reduced motion</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="toolbar" aria-label="Animation controls">
+          <button id="play" type="button" data-playback disabled>Play</button>
+          <button id="pause" type="button" data-playback disabled>Pause</button>
+          <button id="replay" type="button" data-playback disabled>
+            Replay from start
+          </button>
+          <span class="divider" aria-hidden="true"></span>
+          <button id="garden-complete" type="button" data-playback disabled>
+            Garden - 10.5 s
+          </button>
+          <button id="three-hearts" type="button" data-playback disabled>
+            Three hearts - 20 s
+          </button>
+          <button id="all-hearts" type="button" data-playback disabled>
+            Full sequence - 5 min
+          </button>
+        </div>
+
+        <div class="timeline-row">
+          <label for="timeline">Preview time</label>
+          <input
+            id="timeline"
+            type="range"
+            min="0"
+            max="300000"
+            step="100"
+            value="0"
+            disabled
+          />
+          <output id="timeline-value" for="timeline">0.0 s</output>
+        </div>
+
+        <div class="title-row">
+          <div>
+            <h2 id="scene-title">Load the review</h2>
+            <p id="scene-description" class="description"></p>
+          </div>
+          <div class="scene-navigation">
+            <button
+              id="previous"
+              type="button"
+              aria-label="Previous garden"
+              disabled
+            >
+              ← Previous
+            </button>
+            <button id="next" type="button" aria-label="Next garden" disabled>
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <p id="status" class="status" role="status" aria-live="polite">
+          Load the site files.
+        </p>
+        <div id="stage" class="stage">
+          <div id="frame-wrap" class="frame-wrap">
+            <iframe id="preview" title="Flowers production preview"></iframe>
+          </div>
+        </div>
+        <div class="metrics" aria-label="Preview details">
+          <span id="metric-viewport"></span>
+          <span id="metric-hearts"></span>
+          <span id="metric-motion"></span>
+          <span id="metric-seed"></span>
+        </div>
+
+        <p class="help">
+          The frame uses the current index.html, styles, scripts, and local
+          fonts. It does not use a separate art generator.
+        </p>
+        <p class="help">
+          Each garden has a fixed seed for repeatable checks. A normal visit
+          selects a garden without these controls.
+        </p>
+        <p class="help">
+          Each time control pauses the real animation at that point. Play
+          continues from that point. A theme change restarts the animation.
+        </p>
+        <p class="help">
+          Reduced motion shows the normal static result. The browser preference
+          still applies when you select normal motion.
+        </p>
+        <p class="help">
+          Use a local server for this review page. The main site also works when
+          you open index.html directly.
+        </p>
+      </main>
+    </div>
+  </body>
+</html>

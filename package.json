@@ -1,0 +1,19 @@
+{
+  "name": "flowers",
+  "version": "2.0.0",
+  "private": true,
+  "description": "A small garden for notes to someone you love.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.cjs",
+    "stage": "node tools/stage.cjs",
+    "serve": "node tools/serve.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100",
+    "prettier": "3.9.9"
+  }
+}

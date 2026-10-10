@@ -1,87 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowers</title> <!-- This is the title for the site that will appear when the user views the website. -->
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="path/to/your/icon.png"> <!-- Placeholder for favicon (site logo, you can link to an image hosted on cloudflare or elsewhere) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="path/to/your/icon.png"> <!-- Placeholder for apple touch icon (site logo, you can link to an image hosted on cloudflare or elsewhere) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <style>
-        .hidden {
-            display: none;
-        }
-        .visible {
-            display: block;
-        }
-        #message {
-            position: absolute;
-            bottom: 120px;
-            padding: 0 10px;
-            width: calc(100% - 20px); /* Adjust width to prevent overflow */
-            font-size: 1.5em;
-            color: white;
-            text-align: center;
-            z-index: 1;
-            box-sizing: border-box; /* Include padding and border in element's total width and height */
-        }
-        .nav-buttons {
-            position: absolute;
-            bottom: 50px; /* Move the buttons up */
-            width: 100%;
-            text-align: center;
-        }
-        .nav-button {
-            background-color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 50%;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 1.5em;
-            color: #0C2C40;
-            margin: 0 10px;
-        }
-        .nav-button:hover {
-            background-color: rgba(255, 255, 255, 1);
-        }
-        @media (max-width: 600px) {
-            #message {
-                font-size: 1.2em;
-            }
-            .nav-button {
-                font-size: 1.2em;
-                padding: 8px;
-            }
-            .nav-buttons {
-                bottom: 30px; /* Adjust the margin for mobile */
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Container for flower animation -->
-    <div id="flower-container"></div>
-    
-    <!-- Container for displaying messages -->
-    <div id="message">
-        <!-- Span elements to display different messages, the newest message will always appear first when you load the page. To add a new message, copy the span line, paste it and change to part3, part4 etc then add your message. -->
-        <span id="part1" class="hidden">If you ask me, I bet they'd probably really like it if you do.</span>
-        <span id="part2" class="hidden">This website is open source, and you can make your own version for a loved one.</span>
-    </div>
-    
-    <!-- Navigation buttons to switch between messages -->
-    <div class="nav-buttons">
-        <button id="prev-button" class="nav-button">←</button>
-        <button id="next-button" class="nav-button">→</button>
-    </div>
-    
-    <!-- Hidden message container for optional easter egg -->
-    <div id="hidden-message" style="display: none;">
-        <!-- You can leave a hidden message here in the code if you want to include a little easter egg for the person to find, or to show them later. -->
-    </div>
-    
-    <!-- Linking the external JavaScript file -->
-    <script src="script.js"></script>
-</body>
+  <head>
+    <!-- This asks search engines not to list the page. It does not make notes private. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f8f7f2" />
+    <meta
+      name="description"
+      content="A little garden. A few words. Something to keep."
+    />
+    <title>Flowers - a little garden for you</title>
+    <link rel="icon" href="assets/flower.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Edit notes.js for the words. The scripts below draw the garden. -->
+    <script defer src="notes.js"></script>
+    <script defer src="js/gardens.js"></script>
+    <script defer src="js/app.js"></script>
+    <script defer src="js/theme.js"></script>
+    <script defer src="js/canvas-renderer.js"></script>
+    <script defer src="js/garden.js"></script>
+  </head>
+  <body>
+    <main id="paper">
+      <header class="masthead">
+        <span class="wordmark"
+          >flowers<button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Switch to night mode"
+            aria-pressed="false"
+            title="Switch to night mode"
+          >
+            <svg
+              class="theme-moon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M17.9 16.6C11.8 17.6 7.1 12.7 8.6 6.4C4.9 8.2 3.8 12.9 5.7 16.3C8.2 20.7 14.5 21.1 17.9 16.6Z"
+              />
+            </svg>
+            <svg
+              class="theme-sun"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M15.9 11.8C16.1 14.1 14.3 16 12.1 16.1C9.8 16.1 7.9 14.4 7.9 12.1C7.8 9.9 9.5 7.9 11.8 7.9C14 7.8 15.8 9.6 15.9 11.8Z M12 2.3L12.1 4.7 M18.9 5L17.3 6.8 M21.6 12.1L19.2 12 M18.8 19L17.1 17.2 M11.8 21.7L11.9 19.2 M4.9 18.8L6.8 17.1 M2.4 11.8L4.8 11.9 M5.1 4.9L6.7 6.8"
+              />
+            </svg></button
+        ></span>
+      </header>
+      <section id="letter" class="letter" aria-label="Your notes">
+        <p id="note-to" class="salutation" hidden></p>
+        <div class="note-space">
+          <p
+            id="note-text"
+            class="note-text"
+            aria-live="polite"
+            aria-atomic="true"
+          ></p>
+          <p id="note-error" class="note-error" role="alert" hidden></p>
+        </div>
+        <p id="note-from" class="signature" hidden></p>
+        <nav id="note-nav" hidden class="note-nav" aria-label="Browse notes">
+          <button
+            id="prev-note"
+            class="arrow"
+            type="button"
+            aria-label="Previous note"
+          >
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <path d="M42 12C29 11 17 13 6 12M16 4L6 12l10 8" />
+            </svg>
+          </button>
+          <span id="note-counter" class="note-counter" aria-live="off"></span>
+          <button
+            id="next-note"
+            class="arrow"
+            type="button"
+            aria-label="Next note"
+          >
+            <svg viewBox="0 0 48 24" aria-hidden="true">
+              <path d="M6 12c13-1 25 1 36 0M32 4l10 8-10 8" />
+            </svg>
+          </button>
+        </nav>
+      </section>
+      <svg id="hearts" aria-hidden="true" focusable="false"></svg>
+      <div class="garden-wrap" aria-hidden="true">
+        <svg
+          id="garden"
+          xmlns="http://www.w3.org/2000/svg"
+          focusable="false"
+        ></svg>
+      </div>
+    </main>
+    <noscript
+      ><p class="no-script">
+        Enable JavaScript to draw the garden and browse the notes.
+      </p></noscript
+    >
+  </body>
 </html>

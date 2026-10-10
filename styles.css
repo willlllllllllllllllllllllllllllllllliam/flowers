@@ -1,87 +1,437 @@
-/* General styles for the body element */
+/* OPTIONAL: Change these values to make the page your own.
+   The default values match the Flowers V2 design.
+   Edit notes.js for the words. No CSS changes are required. */
+:root {
+  --message-font: Walkway, sans-serif;
+  --message-size: 24px;
+  --message-line-height: 1.6;
+}
+@font-face {
+  font-family: Walkway;
+  src: url("assets/Walkway-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Typewriter;
+  src: url("assets/SpecialElite-Regular.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+}
+/* Day colors. Keep enough contrast between paper and ink. */
+:root {
+  --paper: #f8f7f2;
+  --ink: #252622;
+  --faint: #74766d;
+  --line: #d4d2c8;
+  --caption: #686a61;
+  --arrow: #55574f;
+  --arrow-hover: #10110f;
+  --counter: #808177;
+  --ink-edge: #25262225;
+  --ink-bleed: #25262218;
+  --wash: #ffffff65;
+  --grain-opacity: 0.09;
+  --grain-blend: multiply;
+  color-scheme: light;
+}
+/* Night colors. The sun and moon button switches these values. */
+:root[data-theme="dark"] {
+  --paper: #151515;
+  --ink: #f3f1e9;
+  --faint: #a09e96;
+  --line: #494841;
+  --caption: #b8b5ac;
+  --arrow: #c3c0b7;
+  --arrow-hover: #fffdf5;
+  --counter: #a5a297;
+  --ink-edge: #f3f1e925;
+  --ink-bleed: #f3f1e918;
+  --wash: #ffffff03;
+  --grain-opacity: 0.045;
+  --grain-blend: screen;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
 body {
-    margin: 0; /* Remove default margin */
-    overflow: hidden; /* Hide overflow to prevent scrolling */
-    display: flex; /* Use flexbox for centering */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-    background-color: #0C2C40; /* Background color */
-    font-family: Arial, sans-serif; /* Font family */
-    color: white; /* Text color */
-    text-align: center; /* Center text */
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Typewriter, "Courier New", monospace;
+  font-weight: 400;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 5px;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+button[hidden],
+[hidden] {
+  display: none !important;
+}
+#paper {
+  position: relative;
+  min-height: 760px;
+  height: 100svh;
+  isolation: isolate;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 46% 36%, var(--wash), transparent 65%);
+}
+#paper:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23n)' opacity='.5' d='M0 0h240v240H0z'/%3E%3C/svg%3E");
+  mix-blend-mode: var(--grain-blend);
+}
+.masthead {
+  position: absolute;
+  top: 33px;
+  left: 42px;
+  right: 42px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  z-index: 5;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.wordmark {
+  position: relative;
+  font-size: 20px;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.06em;
+  padding-right: 29px;
+}
+.theme-toggle {
+  position: absolute;
+  left: calc(100% - 28px);
+  top: 50%;
+  transform: translateY(-54%);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+}
+.theme-toggle svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-toggle .theme-moon {
+  fill: currentColor;
+  stroke-width: 0.65;
+}
+.theme-toggle .theme-sun {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .theme-moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .theme-sun {
+  display: block;
+}
+.theme-toggle:hover svg {
+  transform: rotate(-10deg);
 }
 
-/* Container for flower animation */
-#flower-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw; /* Full viewport width */
-    height: 100vh; /* Full viewport height */
-    background-color: #0C2C40; /* Background color */
-    z-index: -1; /* Place behind other elements */
+.letter {
+  position: relative;
+  z-index: 4;
+  width: min(560px, calc(100% - 100px));
+  margin: 0 auto;
+  padding-top: calc(clamp(134px, 21svh, 240px) + 32px);
+  text-align: center;
+}
+.salutation {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  margin: 0 0 31px;
+  color: var(--caption);
+}
+.note-space {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 130px;
+}
+.note-text {
+  font-family: var(--message-font);
+  font-size: var(--message-size);
+  font-weight: 400;
+  line-height: var(--message-line-height);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  letter-spacing: 0;
+  margin: 0;
+  text-shadow: none;
+  font-synthesis: none;
+}
+.signature {
+  margin: 25px 0 24px;
+  font-size: 13px;
+  color: var(--caption);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.note-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  height: 44px;
+}
+.arrow {
+  border: 0;
+  background: transparent;
+  padding: 12px 8px;
+  width: 58px;
+  height: 44px;
+  transition:
+    transform 0.2s,
+    color 0.2s;
+  color: var(--arrow);
+}
+.arrow svg {
+  width: 39px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.arrow:hover {
+  color: var(--arrow-hover);
+  transform: translateX(-3px);
+}
+.arrow:last-child:hover {
+  transform: translateX(3px);
+}
+.note-counter {
+  font:
+    10px Typewriter,
+    monospace;
+  color: var(--counter);
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  min-width: 55px;
+}
+.garden-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 37svh;
+  max-height: 440px;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+#garden {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#garden .ink-stroke {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+#garden .ink-fill {
+  fill: var(--paper);
+}
+#hearts {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+.no-script {
+  position: fixed;
+  top: 65px;
+  left: 15px;
+  right: 15px;
+  text-align: center;
+  font-size: 12px;
+}
+body.long-note #paper {
+  height: auto;
+  min-height: 100svh;
+  padding-bottom: max(340px, calc(37svh + 60px));
+}
+body.long-note .letter {
+  padding-top: 125px;
+}
+@media (min-width: 701px) and (max-height: 760px) {
+  #paper {
+    min-height: 660px;
+  }
+  .letter {
+    padding-top: 144px;
+  }
+  .salutation {
+    margin-bottom: 20px;
+  }
+  .note-space {
+    min-height: 110px;
+  }
+  .signature {
+    margin: 18px 0 14px;
+  }
+  .garden-wrap {
+    height: 33svh;
+  }
+  .masthead {
+    top: 25px;
+  }
+}
+@media (max-width: 700px) {
+  #paper {
+    min-height: 700px;
+  }
+  .masthead {
+    top: 25px;
+    left: 24px;
+    right: 24px;
+  }
+  .wordmark {
+    font-size: 18px;
+  }
+  .letter {
+    width: calc(100% - 64px);
+    padding-top: calc(clamp(140px, 21svh, 195px) + 24px);
+  }
+  .salutation {
+    margin-bottom: 26px;
+    font-size: 12px;
+  }
+  .note-space {
+    min-height: 130px;
+  }
+  .signature {
+    font-size: 12px;
+    margin: 24px 0 17px;
+  }
+  .garden-wrap {
+    height: 31svh;
+  }
+  .note-nav {
+    gap: 19px;
+  }
+}
+@media (max-width: 380px) {
+  .letter {
+    width: calc(100% - 48px);
+  }
+}
+@media (max-width: 700px) and (max-height: 700px) {
+  #paper {
+    min-height: 100svh;
+  }
+  .letter {
+    padding-top: 129px;
+  }
+  .salutation {
+    margin-bottom: 17px;
+  }
+  .note-space {
+    min-height: 105px;
+  }
+  .signature {
+    margin: 17px 0 11px;
+  }
+  .garden-wrap {
+    height: 30svh;
+  }
+}
+@media (min-width: 701px) and (max-height: 520px) {
+  #paper {
+    min-height: 100svh;
+  }
+  .masthead {
+    top: 17px;
+  }
+  .letter {
+    padding-top: 82px;
+  }
+  .salutation {
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .note-space {
+    min-height: 80px;
+  }
+  .signature {
+    margin: 12px 0 6px;
+    font-size: 11px;
+  }
+  .note-nav {
+    height: 34px;
+  }
+  .arrow {
+    height: 34px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  .garden-wrap {
+    height: 25svh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
-/* Styles for the canvas element */
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw; /* Full viewport width */
-    height: 100vh; /* Full viewport height */
-    z-index: -2; /* Ensure the canvas is behind everything else */
+/* Keep the arrows close when the optional signature is blank. */
+.signature[hidden] + .note-nav {
+  margin-top: 16px;
 }
-
-/* Container for displaying messages */
-#message {
-    position: absolute;
-    bottom: 100px;
-    padding: 0 10px;
-    width: calc(100% - 20px); /* Adjust width to prevent overflow */
-    font-size: 1.5em; /* Font size */
-    color: white; /* Text color */
-    text-align: center; /* Center text */
-    z-index: 1; /* Ensure it's above other elements */
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
-}
-
-/* Container for navigation buttons */
-.nav-buttons {
-    position: absolute;
-    bottom: 50px; /* Move the buttons up */
-    width: 100%; /* Full width */
-    text-align: center; /* Center buttons */
-}
-
-/* Styles for each navigation button */
-.nav-button {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-    border: none; /* No border */
-    border-radius: 50%; /* Circular shape */
-    padding: 10px; /* Padding inside the button */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 1.5em; /* Font size */
-    color: #0C2C40; /* Text color */
-    margin: 0 10px; /* Margin between buttons */
-}
-
-/* Hover effect for navigation buttons */
-.nav-button:hover {
-    background-color: rgba(255, 255, 255, 1); /* Fully opaque background on hover */
-}
-
-/* Responsive styles for smaller screens */
-@media (max-width: 600px) {
-    #message {
-        font-size: 1.2em; /* Smaller font size */
-    }
-    .nav-button {
-        font-size: 1.2em; /* Smaller font size */
-        padding: 8px; /* Smaller padding */
-    }
-    .nav-buttons {
-        bottom: 30px; /* Adjust the margin for mobile */
-    }
+.note-error {
+  font:
+    15px/1.6 Typewriter,
+    monospace;
+  overflow-wrap: anywhere;
 }
