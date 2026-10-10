@@ -2,27 +2,20 @@
 
 A small website for someone you love. Leave a note for a birthday, an anniversary, or an ordinary day.
 
-An ink garden draws itself across the page. Your newest message appears first. The arrows open older messages.
+An ink garden draws itself below your notes. Make your own copy. Change it to suit the person you love. Return later with another note.
 
-Make your own copy. Write your notes. Change the design if you like. Return later to add something new.
+[Live demo](https://willlllllllllllllllllllllllllllllllliam.github.io/flowers/)
 
-[Live demo (V1 until this release is published)](https://willlllllllllllllllllllllllllllllllliam.github.io/flowers/)
+[Set up](#set-up) · [Customize](#customize) · [Publish](#publish) · [Help](#help)
 
-You do not need prior code experience. You need a browser, a plain-text editor, and a little time.
-The site needs no account system, installation, build command, or local server. Open `index.html` to try it.
+You do not need code experience. The site needs no build step, package install, or local server.
 
-## Before you write a personal note
+> **Privacy:** Treat hosted notes as public, even with an unlisted link. Deleted notes can remain in Git history. Do not include sensitive information.
+> See [GitHub's privacy warning](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-Treat every hosted note as public. Someone can read the notes in `notes.js`, even without the navigation arrows.
-An unlisted address does not make the site private. GitHub Pages sites are public, even with many private-repository configurations.
-See [GitHub's privacy warning](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+<a id="set-up"></a>
 
-A public repository also exposes its files and Git history. A deletion from the current file does not remove a note from earlier commits.
-Do not put passwords, addresses, or other sensitive details here.
-
-## Make your own version
-
-This path uses GitHub Desktop. You edit the files on your computer, then publish your own copy.
+## Make your own
 
 ### 1. Copy the project
 
@@ -39,32 +32,16 @@ This path uses GitHub Desktop. You edit the files on your computer, then publish
 
 If Desktop asks how you will use the fork, select **For my own purposes**.
 GitHub's [clone guide](https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop) includes screenshots.
+For command-line use, see the [terminal instructions](docs/DEVELOPMENT.md#terminal-option).
+
+<a id="write-your-notes"></a>
 
 ### 2. Write your notes
 
-Open the project folder in a plain-text editor, such as VS Code or Notepad. Do not use Word or Pages.
-If you use TextEdit on a Mac, select **Format > Make Plain Text** first. Turn off smart quotes.
+Open `notes.js` in a plain-text editor, such as VS Code or Notepad. This is the only file you must edit.
+Do not use Word or Pages. In TextEdit, choose **Format > Make Plain Text**. Turn off smart quotes.
 
-Open `notes.js`. This is the only file you must edit.
-
-The supplied file contains the two original example messages:
-
-```js
-window.FLOWERS_NOTES = {
-  to: "",
-  from: "",
-  messages: [
-    "If you ask me, I bet they'd probably really like it if you do.",
-    "This website is open source, and you can make your own version for a loved one."
-  ]
-};
-```
-
-Replace those messages with your own. Keep the oldest message first in the file.
-Add each new message at the bottom of the list. The page starts with the last message in that list.
-Dates in the message text do not change this order.
-
-Here is a complete example:
+Replace the two example messages with your own. Here is a complete configuration:
 
 ```js
 window.FLOWERS_NOTES = {
@@ -78,23 +55,29 @@ window.FLOWERS_NOTES = {
 };
 ```
 
-In this example, “No special occasion today” appears first.
-
-- Put a comma between messages. Keep the square brackets around the list.
-- Put each message inside straight double quotes: `"message"`.
-- Use `\n` for a line break inside a message.
-- Use `\"` for a double quote inside a message.
-- Use `\\` for a literal backslash.
-- Keep apostrophes as they are: `I'm`, `you'd`, `we'll`.
-- Write accents, other languages, and emoji directly. Save the file as UTF-8.
-- Write plain text. The page does not interpret HTML or Markdown in your notes.
-
-The font does not include every character. Your browser uses a fallback font for missing characters.
+Keep the oldest note first in the file. The page shows the last note first: “No special occasion today” in this example.
+Dates in the text do not control the order.
 
 The `to` field adds a name above the message. The `from` field adds a signature below it.
-Set either field to `""` to hide it. Both fields start empty.
+Leave either field as `""` to hide it. Both fields start empty.
 
-### 3. See your version
+- Keep each message inside straight double quotes: `"message"`.
+- Put a comma between messages. Keep the square brackets around the list.
+- Use `\n` for a line break.
+- Use `\"` for a double quote inside a message. Apostrophes need no change.
+
+<details>
+<summary>More text options</summary>
+
+Use `\\` for a backslash. Write accents, other languages, and emoji directly. Save the file as UTF-8.
+The browser uses a fallback font for characters that Walkway does not include.
+Notes use plain text, not HTML or Markdown.
+
+</details>
+
+<a id="preview-your-site"></a>
+
+### 3. Preview your site
 
 1. Save `notes.js`.
 2. Open the project folder in Finder or File Explorer.
@@ -102,13 +85,12 @@ Set either field to `""` to hide it. Both fields start empty.
 4. Check both arrows if you have at least two notes.
 5. Check the sun or moon button.
 
-Keep `index.html`, `notes.js`, `styles.css`, `js/`, and `assets/` together. Do not move `index.html` out of the project folder.
-After each edit, save the file. Refresh the browser to see the change.
+Keep the project folder together. After an edit, save the file. Refresh the browser to see the change.
+Long notes can make the page scroll. Check your notes on a phone after publication.
 
-The page chooses a garden on each visit. It avoids the previous garden when browser storage works.
-Long notes can make the page scroll. Check long notes on your phone after publication.
+<a id="save-to-github"></a>
 
-### 4. Save your changes to GitHub
+### 4. Save to GitHub
 
 1. Return to GitHub Desktop.
 2. Review the changed files.
@@ -117,8 +99,10 @@ Long notes can make the page scroll. Check long notes on your phone after public
 5. Click **Commit to main**.
 6. Click **Push origin**.
 
-A commit saves a version on your computer. A push sends that version to your GitHub fork.
-Use your own fork for your notes. Do not send personal notes to the original project through a pull request.
+A commit saves a version on your computer. A push sends that version to your fork.
+Do not send personal notes to the original project through a pull request.
+
+<a id="publish"></a>
 
 ### 5. Publish with GitHub Pages
 
@@ -132,129 +116,79 @@ Use your own fork for your notes. Do not send personal notes to the original pro
 8. Select `main`.
 9. Start the run.
 
-The repository already includes the workflow. You do not need to add a suggested template.
-The workflow publishes only the website files and license notices. It excludes the review tools, tests, and development guides.
+The workflow already exists. You do not need a suggested template.
+Wait for the run to succeed. Find your site address under **Settings > Pages**.
+Later pushes to `main` update the site automatically.
 
-Wait for the run to succeed. Find the site address under **Settings > Pages**.
-The address usually follows this pattern: `https://YOUR-USERNAME.github.io/flowers/`.
-Use the actual address from your repository settings.
+### Add a note later
 
-Later pushes to `main` update the site automatically. See [GitHub's Pages setup guide](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) if the settings differ.
+Add the new note at the bottom of `messages`. Keep a comma between notes.
+Repeat the [preview](#preview-your-site) and [GitHub](#save-to-github) steps above.
 
-### 6. Leave another note later
+## Customize
 
-1. Open your local `notes.js`.
-2. Check that a comma follows the previous last message.
-3. Add your new message below it.
-4. Save the file.
-5. Refresh your local preview.
-6. Commit the edit in GitHub Desktop.
-7. Push it to your fork.
+Start with a small change. Keep a saved version that you can return to.
 
-Your new message appears first after the deployment completes. The older notes remain available through the arrows.
-
-## Make the design your own
-
-The files contain comments beside common edits. Start with a small change. Keep a saved version that you can return to.
-
-- **Browser-tab title:** Change the text inside `<title>` in `index.html`.
-- **Page heading:** Change the `flowers` text beside the theme button in `index.html`.
-- **Names and notes:** Edit `notes.js`.
-- **Paper and ink colors:** Edit `--paper` and `--ink` in `styles.css`.
+- **Title and heading:** Edit `<title>` or the `flowers` text in `index.html`. Keep the `id` attributes unchanged.
+- **Day colors:** Edit `--paper` and `--ink` in `styles.css`.
 - **Night colors:** Edit those variables in the `[data-theme="dark"]` section.
-- **Message font:** Edit `--message-font` near the top of `styles.css`.
-- **Message size:** Edit `--message-size` in that same section. Keep a unit such as `px`.
-- **Space between text lines:** Edit `--message-line-height` in that same section.
-- **Layout:** Edit `styles.css`. Check a narrow phone screen as well as a laptop.
+- **Message text:** Edit `--message-font`, `--message-size`, or `--message-line-height` near the top of `styles.css`. Keep units such as `px` for size.
 
-Keep the `id` attributes in `index.html`. The code uses those names to find the page elements.
-The theme button restarts the illustration with the new ink color. Reduced-motion preferences limit the animation.
+For code changes and garden reviews, see [the developer guide](docs/DEVELOPMENT.md).
 
-For deeper changes, see [the development guide](docs/DEVELOPMENT.md). The garden review tools stay separate from the gift itself.
+## Help
 
-## If something does not work
+<details>
+<summary>The page reports a notes error</summary>
 
-### The page reports a notes error
+Check the quotes, commas, brackets, and braces in `notes.js`. Keep `window.FLOWERS_NOTES =` before the configuration.
+Use at least one nonempty message. Keep `to` and `from` as text.
+Save your words elsewhere before you restore the [complete example](#write-your-notes).
 
-Check the quotes, commas, square brackets, and braces in `notes.js`.
-Keep `window.FLOWERS_NOTES =` at the start of the assignment.
-Use at least one nonempty message. Keep `to` and `from` as text, even when they are empty.
+</details>
 
-Copy the complete example above into `notes.js` if you need a known-good starting point.
-Save your own text elsewhere first.
+<details>
+<summary>My changes do not appear</summary>
 
-### My changes do not appear
+Save the file. Confirm that the browser shows `index.html` from the same folder. Refresh the page.
+For the public site, check that the latest Actions run succeeded. Try a private browser window if the page still looks old.
 
-Save the file in your editor. Confirm that the browser shows `index.html` from the same folder.
-Refresh the page. For the public site, check that the latest Actions run succeeded.
-Try a private browser window if the public page still looks old.
+</details>
 
-### The file is called `notes.js.txt`
+<details>
+<summary>The file is called notes.js.txt</summary>
 
 Show file extensions in Finder or File Explorer. Rename the file to exactly `notes.js`.
-Do not let the text editor add `.txt` when you save it.
+Do not let the editor add `.txt` when you save it.
 
-### The page has no font, styles, or garden
+</details>
 
-Keep the whole project folder together. Check that `assets/`, `js/`, and `styles.css` sit beside `index.html`.
+<details>
+<summary>The page has no font, styles, or garden</summary>
+
+Keep `assets/`, `js/`, `notes.js`, and `styles.css` beside `index.html`.
 If you downloaded a ZIP, extract it before you open the page.
 
-### Pages shows a 404 error
+</details>
 
-Check **Settings > Pages** for the correct address. Use the repository name in the address when GitHub includes it.
-Check the Actions tab for a successful deployment. Confirm that Pages uses **GitHub Actions**, not a branch folder.
+<details>
+<summary>GitHub Pages shows a 404 error</summary>
 
-## Terminal option
+Use the address under **Settings > Pages**. Confirm that Pages uses **GitHub Actions**, not a branch folder.
+Check the Actions tab for a successful deployment.
+See [GitHub's Pages guide](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) if you need more help.
 
-Fork the repository first. Replace `YOUR-USERNAME` below with your GitHub username.
+</details>
 
-```sh
-git clone https://github.com/YOUR-USERNAME/flowers.git
-cd flowers
-```
+## V1
 
-Edit `notes.js` in your text editor. Open `index.html` in your browser.
-Then save your changes:
-
-```sh
-git status
-git add notes.js
-git commit -m "Add a note"
-git push origin main
-```
-
-Add other files by name if you change them. Use the Pages setup steps above to publish the first version.
-Node.js and npm are only for the optional development tools. Your gift does not need them.
-
-## Files
-
-- `index.html` - The page structure and browser-tab title.
-- `notes.js` - Your messages, optional recipient, and optional signature.
-- `styles.css` - The fonts, colors, spacing, and phone layouts.
-- `js/` - The message controls, theme control, and illustration code.
-- `assets/` - The fonts, icon, and asset notices.
-- `dev/` - The local review tools for developers.
-- `tests/` and `tools/` - The checks and release tools.
-- `.github/workflows/` - The automated checks and Pages deployment.
-
-## The original version
-
-V1 remains in this repository's Git history. V2 continues that history rather than replacing it with a new repository.
-You can [browse the original V1 revision](https://github.com/willlllllllllllllllllllllllllllllllliam/flowers/tree/24a513678619f823cb377d0260853dd6ea9c6aa4).
-The local `flowers-v1` tag also marks that revision. The tag is not on GitHub yet; it will accompany the V2 release.
-Existing forks keep their own files and history. They do not change when this repository receives an update.
+The [original version](https://github.com/willlllllllllllllllllllllllllllllllliam/flowers/tree/24a513678619f823cb377d0260853dd6ea9c6aa4) remains in Git history.
+Existing forks keep their files and history. V2 does not change them.
 
 ## Credits and licenses
 
-The original Flowers version drew inspiration and help from Creative Coderie's tutorial:
+Creative Coderie's [video tutorial](https://www.youtube.com/watch?v=r_3D8zDci8c) and [tutorial code](https://github.com/hbyhadeel/GenArtTutorials/tree/main/Loading_Text_Files_Tutorial) helped inspire V1.
+Zancan's botanical ink work inspired V2. The gardens use original code, not copied artwork.
 
-- [Video tutorial](https://www.youtube.com/watch?v=r_3D8zDci8c)
-- [Tutorial repository](https://github.com/hbyhadeel/GenArtTutorials/tree/main/Loading_Text_Files_Tutorial)
-
-Zancan's botanical ink work inspired the art direction for V2. The project uses its own code-generated gardens, not copied artwork.
-
-The project code uses the [MIT License](LICENSE). The fonts have separate terms in `assets/`.
-See [the asset notices](THIRD_PARTY_NOTICES.md) for the font sources and terms.
-Do not assume the code license covers the fonts. Review those terms before reuse, redistribution, or commercial use.
-
-Issues and pull requests are welcome. Please keep examples free of private notes.
+The code uses the [MIT License](LICENSE). Fonts have [separate terms and credits](THIRD_PARTY_NOTICES.md).
+Issues and pull requests are welcome. Keep examples free of private notes.

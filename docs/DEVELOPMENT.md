@@ -1,24 +1,44 @@
 # Development
 
-The root `index.html` is the actual website. It works directly from the local file system.
-There is no separate source copy that authors must compile. Change the root files. Refresh the browser.
+The root `index.html` is the actual website. It opens directly from the local file system without a build.
+Edit the root files. Refresh the browser.
 
 The [README](../README.md) covers the gift workflow. Use this guide for code changes, illustration review, and release checks.
 
-## Keep the gift simple
+## Contributor setup
 
-- Keep `notes.js` as the only required author edit.
-- Keep the newest message first on the page.
-- Keep the oldest message first in the file.
-- Hide empty recipient and signature fields.
-- Keep review controls out of the recipient's page.
-- Keep local preview independent of a package install or server.
-- Keep fonts and scripts local to the site.
-- Keep the garden clear of the messages and arrows.
-- Respect reduced-motion preferences.
-- Keep V1 in the existing Git history.
+Use Node.js 22 or later for the optional development tools. Run these commands from the repository folder:
 
-## Code map
+```sh
+npm ci
+npm test
+```
+
+The browser does not use these dependencies. Authors do not need Node.js or npm to edit notes.
+Use the committed lockfile for repeatable installs. Do not commit `node_modules/`.
+
+## Terminal option
+
+Fork the repository first. Replace `YOUR-USERNAME` below with your GitHub username.
+
+```sh
+git clone https://github.com/YOUR-USERNAME/flowers.git
+cd flowers
+```
+
+[Write your notes](../README.md#write-your-notes) in `notes.js`. Open `index.html` in your browser.
+Save your changes to Git:
+
+```sh
+git status
+git add notes.js
+git commit -m "Add a note"
+git push origin main
+```
+
+Add other files by name if you change them. Follow the [Pages setup steps](../README.md#publish) for the first publication.
+
+## Files
 
 - `index.html` supplies the page elements and script order.
 - `notes.js` supplies the author configuration.
@@ -28,23 +48,26 @@ The [README](../README.md) covers the gift workflow. Use this guide for code cha
 - `js/gardens.js` defines the curated garden variations.
 - `js/garden.js` constructs the illustration and manages its clock.
 - `js/canvas-renderer.js` draws the garden efficiently on a canvas.
+- `assets/` contains the local fonts, icon, and asset notices.
 - `dev/review.html` provides the separate garden review interface.
-- `tools/stage.cjs` prepares the explicit set of files for publication.
+- `tests/` contains the automated checks.
+- `tools/` contains the review server and release tools.
+- `.github/workflows/` contains the automated checks and Pages deployment.
+
+## Keep the gift simple
+
+- Keep `notes.js` as the only required author edit.
+- Keep messages oldest-first in the file and newest-first on the page.
+- Hide empty recipient and signature fields.
+- Keep review controls out of the recipient's page.
+- Keep local preview independent of a package install or server.
+- Keep fonts and scripts local to the site.
+- Keep the garden clear of the messages and arrows.
+- Respect reduced-motion preferences.
+- Keep V1 in the existing Git history.
 
 Use relative asset paths. A personal fork usually lives below a repository path on GitHub Pages.
 Keep the scripts compatible with a direct `file:` visit. Do not add a runtime fetch for the notes.
-
-## Check the source
-
-Use Node.js 22 or later. Run these commands from the repository folder:
-
-```sh
-npm ci
-npm test
-```
-
-The browser does not use these development dependencies. Authors do not need to run these commands to edit notes.
-Use the committed lockfile for repeatable dependency installs. Do not commit `node_modules/`.
 
 ## Review all gardens
 
@@ -57,9 +80,6 @@ node tools/serve.cjs
 Open [the development review page](http://127.0.0.1:4180/dev/review.html).
 The review page provides fixed garden choices for repeatable checks. The normal website chooses a garden without a visible selector.
 
-Review both themes. Review the start, middle, and end of each animation.
-Check a narrow phone layout and a wide laptop layout. Check the message area for illustration overlap.
-
 Press `Ctrl+C` in the terminal when you finish. The review server listens on loopback, not the local network.
 
 ## Prepare the website files
@@ -70,48 +90,59 @@ Run the release tool:
 node tools/stage.cjs
 ```
 
-The tool writes `dist/site/`. It copies the allowed website files without a compile step.
-The Pages workflow publishes this directory. It does not publish the repository root.
+The tool copies the allowed website files to `dist/site/` without a compile step.
+The Pages workflow publishes this directory, not the repository root.
 
 The published files contain the page, notes, styles, runtime scripts, fonts, icon, and required license notices.
 The output excludes `dev/`, `tests/`, `tools/`, Git files, and development dependencies.
 
-Treat `dist/site/` as generated output. Edit the root files, not the copies in that directory.
-Do not commit that output. Run the tool again after a source change.
+Edit the root files, not the generated copies. Do not commit `dist/site/`.
+Run the tool again after a source change.
 
-## Check the beginner workflow before a release
+## Release checks
+
+### Notes and local preview
 
 1. Make a fresh copy without `node_modules/` or earlier generated files.
 2. Open `index.html` directly in a browser.
 3. Confirm that the two supplied messages match the original examples.
 4. Replace the notes with a short test message.
 5. Add a second message at the end.
-6. Confirm that the second message appears first.
-7. Check both arrows.
-8. Check empty names and visible names.
-9. Check quotes, line breaks, accents, and emoji.
-10. Check a long note on a narrow screen.
-11. Check a missing comma in a disposable copy.
-12. Confirm that the page gives a useful configuration error.
-13. Restore valid notes.
-14. Check light mode and dark mode.
-15. Check reduced motion.
-16. Review the garden variations with the development page.
-17. Run the automated tests.
-18. Prepare `dist/site/`.
-19. Inspect every file in that output.
-20. Open the output's `index.html` directly.
+6. Confirm that the page shows the second message first.
+7. Check both arrows, empty names, and visible names.
+8. Check quotes, line breaks, accents, emoji, and a long note on a narrow screen.
 
-Test a served copy below `/flowers/`. Stop the default review server. Run:
+Use a disposable copy to test a missing comma. Confirm that the page gives a useful configuration error.
+Restore valid notes after the test.
+
+### Artwork and device checks
+
+- Review every garden in light mode and dark mode.
+- Review the start, middle, and end of each animation.
+- Check reduced motion.
+- Check narrow phone and wide laptop layouts for overlap with the messages or arrows.
+- Test an actual phone before publication.
+
+A narrow desktop window does not measure phone animation performance.
+
+### Release files and Pages paths
+
+1. Run the automated tests.
+2. Prepare `dist/site/`.
+3. Inspect every file in that output.
+4. Open the output's `index.html` directly.
+
+Test a served copy below `/flowers/`. Stop the default review server.
+Run:
 
 ```sh
 node tools/serve.cjs --prefix=/flowers
 ```
 
 Open `http://127.0.0.1:4180/flowers/`. This checks the relative paths that GitHub Pages needs.
-Test an actual phone before publication. A narrow desktop window does not measure phone animation performance.
+Stop the server after the check.
 
-## Publish deliberately
+### Publication
 
 The **Flowers Pages** workflow tests pull requests. It deploys pushes to `main` and manual runs on `main`.
 Review the final notes before a push to that branch. Never include personal test notes in a release.
@@ -122,8 +153,8 @@ Keep the release output allowlist narrow.
 ## Preserve V1
 
 The original V1 tip is commit `24a513678619f823cb377d0260853dd6ea9c6aa4`.
-The local release preparation marks that commit with the `flowers-v1` tag.
-The release branch continues from V1, so the old files remain in its ancestry.
+The local `flowers-v1` tag marks that commit. The release branch continues from V1, so the old files remain in its ancestry.
+Existing forks retain their own files and history when this repository receives an update.
 
 Do not replace the repository or rewrite its history. Do not force-push a new root commit.
 Retain the original license and tutorial credits.
@@ -131,6 +162,9 @@ Retain the original license and tutorial credits.
 The local tag does not appear on GitHub until a maintainer publishes it.
 Publish that exact tag with the approved V2 release. Do not use a broad command that pushes every local tag.
 After publication, verify that GitHub shows the tag at the original commit.
+
+The [live demo](https://willlllllllllllllllllllllllllllllllliam.github.io/flowers/) shows V1 until the V2 release deploys.
+Verify that the demo shows V2 after the release.
 
 For a separate local V1 checkout, use:
 
