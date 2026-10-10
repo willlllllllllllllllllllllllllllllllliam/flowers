@@ -117,6 +117,7 @@ Do not send personal notes to the original project through a pull request.
 9. Start the run.
 
 The workflow already exists. You do not need a suggested template.
+It copies the selected website files without a package install or test suite. GitHub supplies Node.js for this step.
 Wait for the run to succeed. Find your site address under **Settings > Pages**.
 Later pushes to `main` update the site automatically.
 
@@ -127,12 +128,19 @@ Repeat the [preview](#preview-your-site) and [GitHub](#save-to-github) steps abo
 
 ## Customize
 
+Make the design your own. The defaults are a starting point, not requirements for your fork.
 Start with a small change. Keep a saved version that you can return to.
 
 - **Title and heading:** Edit `<title>` or the `flowers` text in `index.html`. Keep the `id` attributes unchanged.
 - **Day colors:** Edit `--paper` and `--ink` in `styles.css`.
 - **Night colors:** Edit those variables in the `[data-theme="dark"]` section.
 - **Message text:** Edit `--message-font`, `--message-size`, or `--message-line-height` near the top of `styles.css`. Keep units such as `px` for size.
+
+Put new fonts or images in `assets/`. Put new scripts in `js/`.
+Add each new file to `tools/public-files.cjs`, with a path such as `assets/my-font.woff2` or `js/my-script.js`.
+Update the page or CSS to use the file. Keep the file's required license notices.
+Remove old list entries when you no longer use their files. The publisher does not include whole directories automatically.
+See [the asset guide](docs/DEVELOPMENT.md#add-or-replace-assets) for details, including external assets.
 
 For code changes and garden reviews, see [the developer guide](docs/DEVELOPMENT.md).
 

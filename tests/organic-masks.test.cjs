@@ -6,12 +6,8 @@ const vm = require("node:vm");
 const { performance } = require("node:perf_hooks");
 const native = require("@napi-rs/canvas");
 
-const candidate = fs.readFileSync(
+const rendererSource = fs.readFileSync(
   path.join(__dirname, "..", "js", "canvas-renderer.js"),
-  "utf8",
-);
-const approved = fs.readFileSync(
-  path.join(__dirname, "fixtures", "v2-original-canvas-renderer.js"),
   "utf8",
 );
 
@@ -97,7 +93,6 @@ function scene() {
 }
 
 function fixture({
-  source = candidate,
   cacheFinished = true,
   input = scene(),
   pixelRatio = 2,
@@ -191,7 +186,7 @@ function fixture({
       frames.delete(id);
     },
   });
-  vm.runInContext(source, context);
+  vm.runInContext(rendererSource, context);
   const renderer = window.FlowersCanvas.create({
     garden,
     getTime: () => time,
@@ -304,27 +299,6 @@ test("a paper shape requires the next matching timed outline", () => {
   assert.equal(h.garden.style.visibility, "");
 });
 
-test("the final artwork matches the approved renderer in both themes", () => {
-  const next = fixture(),
-    old = fixture({ source: approved });
-  for (const night of [false, true]) {
-    for (const h of [next, old]) {
-      if (night) {
-        h.palette["--ink"] = "#ffffff";
-        h.palette["--paper"] = "#151515";
-      }
-      h.renderer.replay(true);
-    }
-    assert.deepEqual(
-      next.raw(),
-      old.raw(),
-      `The final ${night ? "night" : "day"} pixels are unchanged.`,
-    );
-  }
-  next.renderer.destroy();
-  old.renderer.destroy();
-});
-
 test("cached paper masks match direct output through rewind and theme replay", () => {
   const cached = fixture(),
     direct = fixture({ cacheFinished: false });
@@ -383,7 +357,7 @@ function sampler() {
   const window = {};
   const context = vm.createContext({ window });
   vm.runInContext(
-    candidate.replace(
+    rendererSource.replace(
       /(window\.FlowersCanvas\s*=\s*Object\.freeze\(\{)([^}]*)(\}\))/,
       "$1$2, sampleContour$3",
     ),

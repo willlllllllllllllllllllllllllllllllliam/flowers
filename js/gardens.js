@@ -2,7 +2,9 @@
    Names and descriptions appear only in the developer review.
    x and spread are fractions of the garden width.
    y, r, lean, height, and length use the garden's 440-unit height as a reference.
-   The foliage values control density. Keep the review tests green after an edit. */
+   The foliage values control density.
+   Add, remove, or reorder entries to change the available gardens.
+   Use dev/review.html to inspect each change. */
 (() => {
   "use strict";
   const bloom = (x, y, r, lean, kind) => ({ x, y, r, lean, kind });

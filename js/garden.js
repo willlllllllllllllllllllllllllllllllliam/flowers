@@ -1,5 +1,5 @@
 /* Original procedural botanical drawing for Flowers V2.
-   A visit seed selects one of 24 layouts, then varies the plant details.
+   A visit seed selects a catalog layout, then varies the plant details.
    The SVG holds the geometry. Canvas draws it with the same stroke schedule.
    Hearts use a separate clock and stay clear of the note and garden.
    Use dev/review.html to inspect changes. Authors do not need to edit this file. */
@@ -688,11 +688,14 @@
     }
     random = seeded(seed);
     markId = 0;
-    const profiles = window.FlowersCompositions || [];
-    const match = /^flowers-v2:(\d{2}):/.exec(seed);
+    const profiles = Array.isArray(window.FlowersCompositions)
+      ? window.FlowersCompositions
+      : [];
+    const profileCount = Math.max(1, profiles.length);
+    const match = /^flowers-v2:(\d+):/.exec(seed);
     const index = match
-      ? Math.max(0, Math.min(23, Number(match[1]) - 1))
-      : Math.floor(seeded(seed + "-composition")() * 24);
+      ? Math.max(0, Math.min(profileCount - 1, Number(match[1]) - 1))
+      : Math.floor(seeded(seed + "-composition")() * profileCount);
     composition = profiles[index] || {
       id: 1,
       name: "A little garden",

@@ -5,16 +5,18 @@ Edit the root files. Refresh the browser.
 
 The [README](../README.md) covers the gift workflow. Use this guide for code changes, illustration review, and release checks.
 
-## Contributor setup
+## Optional maintainer checks
 
-Use Node.js 22 or later for the optional development tools. Run these commands from the repository folder:
+Use Node.js 22 or later for these tools. Run these commands from the repository folder:
 
 ```sh
 npm ci
-npm test
+npm run test:maintainer
 ```
 
-The browser does not use these dependencies. Authors do not need Node.js or npm to edit notes.
+`npm test` runs the same suite. These checks help maintain the upstream project; they are not a requirement for publication.
+The Pages workflow does not install these dependencies or run this suite.
+Authors do not need Node.js or npm to edit notes. GitHub supplies Node.js for the release tool.
 Use the committed lockfile for repeatable installs. Do not commit `node_modules/`.
 
 ## Terminal option
@@ -50,11 +52,14 @@ Add other files by name if you change them. Follow the [Pages setup steps](../RE
 - `js/canvas-renderer.js` draws the garden efficiently on a canvas.
 - `assets/` contains the local fonts, icon, and asset notices.
 - `dev/review.html` provides the separate garden review interface.
-- `tests/` contains the automated checks.
+- `tests/` contains optional maintainer checks.
 - `tools/` contains the review server and release tools.
-- `.github/workflows/` contains the automated checks and Pages deployment.
+- `.github/workflows/` contains the Pages workflow.
 
-## Keep the gift simple
+## Principles for upstream contributions
+
+These principles guide contributions to the original Flowers project. They do not restrict your own fork.
+Change the design, behavior, and files to suit your gift.
 
 - Keep `notes.js` as the only required author edit.
 - Keep messages oldest-first in the file and newest-first on the page.
@@ -68,6 +73,31 @@ Add other files by name if you change them. Follow the [Pages setup steps](../RE
 
 Use relative asset paths. A personal fork usually lives below a repository path on GitHub Pages.
 Keep the scripts compatible with a direct `file:` visit. Do not add a runtime fetch for the notes.
+
+## Add or replace assets
+
+The release tool uses an explicit file list in `tools/public-files.cjs`. It does not publish entire directories automatically.
+This keeps private files and development tools out of the website.
+
+1. Put a new font or image in `assets/`.
+2. Put a new script in `js/`.
+3. Add each file to the existing list in `tools/public-files.cjs`.
+4. Update the HTML, CSS, or JavaScript reference to use the file.
+5. Add any required license notice to the file list.
+6. Remove superseded entries when no page or script uses them.
+7. Preview your changes.
+
+Use paths relative to the repository root, such as `assets/my-font.woff2`, `assets/photo.webp`, or `js/my-script.js`.
+Do not add a leading slash. Keep a comma between entries in the list.
+Match the filename's upper-case and lower-case letters. GitHub Pages treats them as different characters.
+Keep required notices for every asset that remains in use.
+
+For a font, update its `@font-face` rule in `styles.css`. Then use its family name in `--message-font`.
+For an image, update its HTML or CSS reference. For a script, add or update its `<script>` element in `index.html`.
+
+The release tool also accepts HTTPS asset URLs. Do not put those URLs in the local file list.
+External assets need a network connection, including during local preview. Self-hosted assets keep the default offline behavior.
+The preview server permits HTTPS assets. External services can still restrict requests from a local page.
 
 ## Review all gardens
 
@@ -84,7 +114,7 @@ Press `Ctrl+C` in the terminal when you finish. The review server listens on loo
 
 ## Prepare the website files
 
-Run the release tool:
+Run the release tool with Node.js 22 or later:
 
 ```sh
 node tools/stage.cjs
@@ -92,6 +122,9 @@ node tools/stage.cjs
 
 The tool copies the allowed website files to `dist/site/` without a compile step.
 The Pages workflow publishes this directory, not the repository root.
+The tool uses only built-in Node.js modules. It does not need `npm ci`, `npm test`, or development dependencies.
+It checks notes, script syntax, and common HTML/CSS asset references. It does not check remote availability or JavaScript import paths.
+Preview your changes before publication. A successful file check does not replace a browser check.
 
 The published files contain the page, notes, styles, runtime scripts, fonts, icon, and required license notices.
 The output excludes `dev/`, `tests/`, `tools/`, Git files, and development dependencies.
@@ -99,7 +132,9 @@ The output excludes `dev/`, `tests/`, `tools/`, Git files, and development depen
 Edit the root files, not the generated copies. Do not commit `dist/site/`.
 Run the tool again after a source change.
 
-## Release checks
+## Suggested upstream release checks
+
+Use these checks before an upstream release. Adapt them for your fork; the Pages workflow does not require the maintainer suite.
 
 ### Notes and local preview
 
@@ -144,7 +179,8 @@ Stop the server after the check.
 
 ### Publication
 
-The **Flowers Pages** workflow tests pull requests. It deploys pushes to `main` and manual runs on `main`.
+The **Flowers Pages** workflow prepares the selected files on pull requests. It deploys pushes to `main` and manual runs on `main`.
+The workflow runs `node tools/stage.cjs`. It does not install packages or run the maintainer suite.
 Review the final notes before a push to that branch. Never include personal test notes in a release.
 
 Set the repository's Pages source to **GitHub Actions**. Restrict the `github-pages` environment to the intended release branch.

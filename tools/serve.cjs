@@ -10,9 +10,25 @@ const developmentFiles = ["dev/review.html", "dev/review.js", "dev/review.css"];
 const types = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
   ".svg": "image/svg+xml",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".ico": "image/x-icon",
   ".ttf": "font/ttf",
+  ".otf": "font/otf",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".mp3": "audio/mpeg",
+  ".mp4": "video/mp4",
+  ".ogg": "audio/ogg",
+  ".webm": "video/webm",
   ".txt": "text/plain; charset=utf-8",
   ".md": "text/plain; charset=utf-8",
 };
@@ -26,7 +42,7 @@ function createServer({ root = projectRoot, prefix = "" } = {}) {
     response.setHeader("X-Robots-Tag", "noindex, nofollow");
     response.setHeader(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-src 'self' about:; object-src 'none'; base-uri 'self'; form-action 'none'",
+      "default-src 'self'; script-src 'self' https: 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'; font-src 'self' https: data:; img-src 'self' https: data:; media-src 'self' https: data:; connect-src 'self' https:; frame-src 'self' https: about:; object-src 'none'; base-uri 'self'; form-action 'none'",
     );
     if (!["GET", "HEAD"].includes(request.method)) {
       response.setHeader("Allow", "GET, HEAD");
@@ -77,7 +93,7 @@ function createServer({ root = projectRoot, prefix = "" } = {}) {
       const bytes = fs.readFileSync(filename);
       response.writeHead(200, {
         "Content-Type":
-          types[path.extname(filename)] || "text/plain; charset=utf-8",
+          types[path.extname(filename).toLowerCase()] || "text/plain; charset=utf-8",
         "Content-Length": bytes.length,
       });
       response.end(request.method === "HEAD" ? undefined : bytes);

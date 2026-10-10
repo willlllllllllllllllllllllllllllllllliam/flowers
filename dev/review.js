@@ -232,7 +232,7 @@
     selected = (index + scenes.length) % scenes.length;
     const scene = scenes[selected];
     const number = String(scene.id).padStart(2, "0");
-    const seed = `flowers-v2:${number}:review`;
+    const seed = `flowers-v2:${String(selected + 1).padStart(2, "0")}:review`;
     elements.title.textContent = `${number}. ${scene.name}`;
     elements.description.textContent = scene.description;
 

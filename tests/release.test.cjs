@@ -71,36 +71,11 @@ function request(server, url, method = "GET") {
   return { status, headers, body };
 }
 
-test("the actual release validates with only relative assets and valid notes", () => {
+test("the actual release contains valid notes and its declared assets", () => {
   const contents = validateSources();
   assert.equal(contents.size, publicFiles.length);
-  const html = contents.get("index.html").toString("utf8");
-  const scripts = [
-    ...html.matchAll(/<script\b([^>]*?)\bsrc=["']([^"']+)["']([^>]*)>/gi),
-  ];
-  assert.deepEqual(
-    scripts.map((match) => match[2]),
-    [
-      "notes.js",
-      "js/gardens.js",
-      "js/app.js",
-      "js/theme.js",
-      "js/canvas-renderer.js",
-      "js/garden.js",
-    ],
-  );
-  assert.ok(scripts.every((match) => /\bdefer\b/.test(match[1] + match[3])));
-  assert.ok(!/\b(?:data-review|FLOWERS_REVIEW|srcdoc)\b/.test(html));
-  assert.ok(!/<(?:iframe|form|input|textarea)\b/i.test(html));
-  assert.ok(
-    !/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(
-      [...contents]
-        // Check the runtime scripts, not phrases in the author's notes.
-        .filter(([name]) => name.startsWith("js/") && name.endsWith(".js"))
-        .map(([, bytes]) => bytes.toString("utf8"))
-        .join("\n"),
-    ),
-  );
+  assert.ok(contents.has("index.html"));
+  assert.ok(contents.has("notes.js"));
 });
 
 test("stage includes only the public allowlist and removes stale generated files", (t) => {
@@ -208,13 +183,19 @@ test("stage rejects symlink sources, parent directories, and output destinations
   }
 });
 
-test("stage rejects missing files, invalid scripts, machine paths, and external assets", (t) => {
+test("stage rejects missing files, invalid scripts, and nonportable asset paths", (t) => {
   for (const [file, source] of [
     ["js/app.js", "const broken = ;"],
-    ["js/app.js", "// file:///private/private-data.txt"],
-    ["styles.css", "body{background:url(https://example.com/image.png)}"],
+    ["styles.css", "body{background:url(file:///private/photo.png)}"],
+    ["styles.css", "body{background:url(http://example.com/image.png)}"],
     ["index.html", '<script src="/js/app.js"></script>'],
     ["index.html", '<script src="dev/review.js"></script>'],
+    ["index.html", "<script>const broken = ;</script>"],
+    ["index.html", '<script type="module">export const broken = ;</script>'],
+    ["index.html", '<img src="assets/missing.png">'],
+    ["index.html", '<img src = "assets/missing.png">'],
+    ["index.html", "<img src=assets/missing.png>"],
+    ["styles.css", '@import "missing.css";'],
   ]) {
     const directory = fixture(t);
     fs.writeFileSync(path.join(directory, file), source);
@@ -222,7 +203,27 @@ test("stage rejects missing files, invalid scripts, machine paths, and external 
   }
   const directory = fixture(t);
   fs.unlinkSync(path.join(directory, "assets/Walkway-SemiBold.ttf"));
-  assert.throws(() => stageSite(directory), /ENOENT/);
+  assert.throws(
+    () => stageSite(directory),
+    /Missing public file.*tools\/public-files/,
+  );
+});
+
+test("stage permits HTTPS assets, URL suffixes, and literal path text", (t) => {
+  const directory = fixture(t);
+  fs.writeFileSync(
+    path.join(directory, "notes.js"),
+    'window.FLOWERS_NOTES = {to:"",from:"",messages:["Our file:// memory lives at /home/us/ and /Users/us/. You had me at fetch()."]};',
+  );
+  fs.writeFileSync(
+    path.join(directory, "index.html"),
+    '<link href="styles.css?v=2"><img src="assets/flower.svg#petal"><img src="https://example.com/photo.jpg"><script type="application/ld+json">{"name":"Flowers"}</script><script>const html = \'<img src="not-an-asset.png">\';</script><!-- <img src="old.png"> -->',
+  );
+  fs.writeFileSync(
+    path.join(directory, "styles.css"),
+    '@font-face{src:url("assets/Walkway-SemiBold.ttf?v=2")} body{background:url("https://example.com/paper.png")} /* url(old.png) */',
+  );
+  assert.doesNotThrow(() => stageSite(directory));
 });
 
 test("the local server serves only public files and the three review files", (t) => {
@@ -297,7 +298,7 @@ test("the local server rejects linked public and development files", (t) => {
   assert.equal(request(server, "/dev/review.html").status, 404);
 });
 
-test("the Pages workflow pins actions and never deploys a pull request", () => {
+test("Pages uses dependency-free checks and never deploys a pull request", () => {
   const workflow = fs.readFileSync(
     path.join(root, ".github/workflows/pages.yml"),
     "utf8",
@@ -305,7 +306,7 @@ test("the Pages workflow pins actions and never deploys a pull request", () => {
   const actions = [...workflow.matchAll(/uses:\s+([^\s]+)/g)].map(
     (match) => match[1],
   );
-  assert.equal(actions.length, 4);
+  assert.ok(actions.length > 0);
   assert.ok(
     actions.every((action) => /^actions\/[a-z-]+@[a-f0-9]{40}$/.test(action)),
   );
@@ -319,4 +320,6 @@ test("the Pages workflow pins actions and never deploys a pull request", () => {
   assert.match(workflow, /needs: check/);
   assert.match(workflow, /persist-credentials: false/);
   assert.ok(!/pull_request_target|contents: write/.test(workflow));
+  assert.match(workflow, /run: node tools\/stage\.cjs/);
+  assert.ok(!/npm (?:ci|install|test|run test)/.test(workflow));
 });

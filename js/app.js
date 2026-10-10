@@ -31,6 +31,12 @@
 
   // Choose a garden for this visit. Avoid the previous garden when storage works.
   function createSeed() {
+    const count = Math.max(
+      1,
+      Array.isArray(window.FlowersCompositions)
+        ? window.FlowersCompositions.length
+        : 0,
+    );
     const words = new Uint32Array(3);
     if (window.crypto?.getRandomValues) window.crypto.getRandomValues(words);
     else
@@ -41,13 +47,21 @@
       const stored = Number(
         window.sessionStorage?.getItem("flowers:last-composition"),
       );
-      if (Number.isInteger(stored) && stored >= 1 && stored <= 24)
+      if (
+        count > 1 &&
+        Number.isInteger(stored) &&
+        stored >= 1 &&
+        stored <= count
+      )
         previous = stored;
     } catch {
       // Some browsers disable session storage for local files.
     }
     let number =
-      1 + Math.floor((words[0] / 4294967296) * (previous === null ? 24 : 23));
+      1 +
+      Math.floor(
+        (words[0] / 4294967296) * (previous === null ? count : count - 1),
+      );
     if (previous !== null && number >= previous) number += 1;
     try {
       window.sessionStorage?.setItem(

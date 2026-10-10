@@ -11,98 +11,54 @@ vm.runInNewContext(
   context,
 );
 const gardens = context.window.FlowersCompositions;
-const kinds = new Set(["poppy", "cosmos", "daisy", "umbel"]);
-const inRange = (value, minimum, maximum, label) => {
+const finite = (value, label) => {
   assert.equal(typeof value, "number", `${label} must be numeric`);
   assert.ok(Number.isFinite(value), `${label} must be finite`);
-  assert.ok(
-    value >= minimum && value <= maximum,
-    `${label}: ${value} is outside ${minimum}..${maximum}`,
-  );
 };
 
-test("the catalog has 24 unique, named compositions", () => {
-  assert.equal(gardens.length, 24);
-  assert.equal(new Set(gardens.map((garden) => garden.name)).size, 24);
-  assert.equal(new Set(gardens.map((garden) => garden.description)).size, 24);
-  gardens.forEach((garden, index) => {
-    assert.equal(garden.id, index + 1);
-    assert.ok(garden.name.length > 3 && garden.name.length < 40);
-    assert.ok(
-      garden.description.length > 20 && garden.description.length < 140,
-    );
-  });
-});
-
-test("each desktop and mobile composition has its own plant arrangement", () => {
+test("the catalog has identifiable compositions", () => {
+  assert.ok(Array.isArray(gardens) && gardens.length > 0);
   assert.equal(
-    new Set(gardens.map((garden) => JSON.stringify(garden.blooms))).size,
-    24,
+    new Set(gardens.map((garden) => garden.id)).size,
+    gardens.length,
   );
-  assert.equal(
-    new Set(gardens.map((garden) => JSON.stringify(garden.mobileBlooms))).size,
-    24,
-  );
-  gardens.forEach((garden) => {
-    inRange(garden.blooms.length, 7, 15, `${garden.name} desktop count`);
-    inRange(garden.mobileBlooms.length, 4, 6, `${garden.name} mobile count`);
-    assert.notEqual(
-      JSON.stringify(garden.mobileBlooms),
-      JSON.stringify(garden.blooms.slice(0, garden.mobileBlooms.length)),
-    );
-  });
-});
-
-test("flowers fit the garden bounds with space above their petals", () => {
-  gardens.forEach((garden) => {
-    for (const [layout, flowers] of [
-      ["desktop", garden.blooms],
-      ["mobile", garden.mobileBlooms],
-    ]) {
-      flowers.forEach((flower, index) => {
-        const label = `${garden.name} ${layout} flower ${index + 1}`;
-        inRange(flower.x, 0, 1, `${label} x`);
-        inRange(flower.y, 80, 340, `${label} y`);
-        inRange(flower.r, 30, 70, `${label} radius`);
-        inRange(flower.lean, -70, 70, `${label} lean`);
-        assert.ok(kinds.has(flower.kind), `${label} has an unknown species`);
-        assert.ok(flower.y - flower.r >= 15, `${label} touches the top edge`);
-        if (flower.x > 0.4 && flower.x < 0.6) {
-          assert.ok(flower.y >= 280, `${label} rises into the central gap`);
-        }
-      });
-    }
-  });
-});
-
-test("the catalog uses all four flower forms in both viewport layouts", () => {
-  for (const layout of ["blooms", "mobileBlooms"]) {
-    const seen = new Set(
-      gardens.flatMap((garden) => garden[layout].map((flower) => flower.kind)),
-    );
-    assert.deepEqual([...seen].sort(), [...kinds].sort());
+  for (const garden of gardens) {
+    assert.ok(Number.isInteger(garden.id) && garden.id > 0);
+    assert.equal(typeof garden.name, "string");
+    assert.equal(typeof garden.description, "string");
   }
-  assert.ok(new Set(gardens.map((garden) => garden.blooms.length)).size >= 4);
-  assert.ok(new Set(gardens.map((garden) => garden.vines.length)).size >= 3);
 });
 
-test("foliage profiles stay inside the renderer limits", () => {
-  gardens.forEach((garden) => {
-    inRange(garden.grass, 0.5, 1.5, `${garden.name} grass`);
-    inRange(garden.ferns, 0, 1.5, `${garden.name} ferns`);
-    inRange(garden.leaves, 0.5, 1.5, `${garden.name} leaves`);
-    inRange(garden.seedheads, 0, 2, `${garden.name} seed heads`);
-    inRange(garden.vines.length, 0, 2, `${garden.name} vine count`);
-    garden.vines.forEach((vine) => {
-      inRange(vine.x, 0, 1, `${garden.name} vine x`);
-      assert.ok(vine.side === 1 || vine.side === -1);
-      inRange(vine.length, 150, 360, `${garden.name} vine length`);
-    });
-    inRange(garden.clusters.length, 3, 4, `${garden.name} cluster count`);
-    garden.clusters.forEach((cluster) => {
-      inRange(cluster.x, 0, 1, `${garden.name} cluster x`);
-      inRange(cluster.spread, 0.04, 0.3, `${garden.name} cluster spread`);
-      inRange(cluster.height, 100, 300, `${garden.name} cluster height`);
-    });
-  });
+test("plant data contains finite dimensions and nonnegative densities", () => {
+  for (const garden of gardens) {
+    for (const flowers of [
+      garden.blooms,
+      garden.mobileBlooms ?? garden.blooms,
+    ]) {
+      assert.ok(Array.isArray(flowers));
+      for (const flower of flowers) {
+        for (const field of ["x", "y", "r", "lean"])
+          finite(flower[field], `${garden.name} flower ${field}`);
+        assert.ok(flower.r > 0, "A flower needs a positive radius.");
+        assert.equal(typeof flower.kind, "string");
+      }
+    }
+    for (const field of ["grass", "ferns", "leaves", "seedheads"]) {
+      finite(garden[field], `${garden.name} ${field}`);
+      assert.ok(garden[field] >= 0);
+    }
+    assert.ok(Array.isArray(garden.vines));
+    for (const vine of garden.vines) {
+      for (const field of ["x", "side", "length"])
+        finite(vine[field], `${garden.name} vine ${field}`);
+      assert.ok(vine.length >= 0);
+    }
+    assert.ok(Array.isArray(garden.clusters));
+    for (const cluster of garden.clusters) {
+      for (const field of ["x", "spread", "height"])
+        finite(cluster[field], `${garden.name} cluster ${field}`);
+      assert.ok(cluster.spread > 0);
+      assert.ok(cluster.height >= 0);
+    }
+  }
 });

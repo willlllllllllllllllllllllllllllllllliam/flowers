@@ -8,7 +8,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test --test-concurrency=1 tests/*.test.cjs",
+    "test": "npm run test:maintainer",
+    "test:maintainer": "node --test --test-concurrency=1 tests/*.test.cjs",
     "stage": "node tools/stage.cjs",
     "serve": "node tools/serve.cjs"
   },

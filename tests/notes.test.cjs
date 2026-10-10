@@ -7,6 +7,12 @@ const vm = require("node:vm");
 const test = require("node:test");
 const { validateNotes } = require("../tools/stage.cjs");
 const root = path.resolve(__dirname, "..");
+const catalogContext = { window: {} };
+vm.runInNewContext(
+  fs.readFileSync(path.join(root, "js/gardens.js"), "utf8"),
+  catalogContext,
+);
+const catalog = catalogContext.window.FlowersCompositions;
 const originalMessages = [
   "If you ask me, I bet they'd probably really like it if you do.",
   "This website is open source, and you can make your own version for a loved one.",
@@ -21,6 +27,8 @@ function fixture(
     stored,
     randomWord = 0,
     storageBlocked = false,
+    storageAbsent = false,
+    compositions = catalog,
   } = {},
 ) {
   const elements = new Map(),
@@ -62,6 +70,7 @@ function fixture(
   };
   const window = {
     FLOWERS_NOTES: notes,
+    FlowersCompositions: compositions,
     FLOWERS_REVIEW: { seed: "flowers-v2:07:review" },
     matchMedia: () => ({ matches: true }),
     dispatchEvent: (event) => events.push(event),
@@ -81,6 +90,7 @@ function fixture(
       },
     },
   };
+  if (storageAbsent) delete window.sessionStorage;
   window.parent = inFrame ? {} : window;
   if (!review) delete window.FLOWERS_REVIEW;
   const context = vm.createContext({
@@ -200,19 +210,20 @@ test("missing or invalid notes expose a useful error without fallback messages",
   }
 });
 
-test("all 24 gardens can appear and a normal revisit avoids the last garden", () => {
+test("every catalog garden can appear and a normal revisit avoids the last garden", () => {
   const notes = { to: "", from: "", messages: ["Note."] };
+  const count = Math.max(1, catalog.length);
   const selected = new Set();
-  for (let index = 0; index < 24; index++) {
+  for (let index = 0; index < count; index++) {
     const h = fixture(notes, {
-      randomWord: Math.floor(((index + 0.5) / 24) * 4294967296),
+      randomWord: Math.floor(((index + 0.5) / count) * 4294967296),
     });
     const number = Number(h.api.getState().seed.split(":")[1]);
     selected.add(number);
     assert.equal(Number(h.storage.get("flowers:last-composition")), number);
   }
-  assert.equal(selected.size, 24);
-  for (let last = 1; last <= 24; last++) {
+  assert.equal(selected.size, count);
+  for (let last = 1; count > 1 && last <= count; last++) {
     for (const randomWord of [0, 2147483648, 4294967295]) {
       assert.notEqual(
         Number(
@@ -226,8 +237,65 @@ test("all 24 gardens can appear and a normal revisit avoids the last garden", ()
   }
   assert.match(
     fixture(notes, { storageBlocked: true }).api.getState().seed,
-    /^flowers-v2:\d{2}:/,
+    /^flowers-v2:\d+:/,
   );
+});
+
+test("garden selection supports a single, smaller, or larger catalog", () => {
+  const notes = { to: "", from: "", messages: ["Note."] };
+  for (const count of [1, 2, 7, 25, 101]) {
+    const compositions = Array.from({ length: count }, (_, index) => ({
+      id: count - index + 100,
+    }));
+    for (let index = 0; index < count; index++) {
+      const h = fixture(notes, {
+        compositions,
+        randomWord: Math.floor(((index + 0.5) / count) * 4294967296),
+      });
+      assert.equal(Number(h.api.getState().seed.split(":")[1]), index + 1);
+    }
+    for (const stored of [1, count]) {
+      for (const randomWord of [0, 2147483648, 4294967295]) {
+        const h = fixture(notes, { compositions, stored, randomWord });
+        const selected = Number(h.api.getState().seed.split(":")[1]);
+        assert.ok(selected >= 1 && selected <= count);
+        if (count > 1) assert.notEqual(selected, stored);
+        else assert.equal(selected, 1);
+      }
+    }
+  }
+});
+
+test("stale or unavailable storage cannot select a removed garden", () => {
+  const notes = { to: "", from: "", messages: ["Note."] };
+  const compositions = [catalog.at(-1), catalog[0]];
+  for (const options of [
+    { stored: 0 },
+    { stored: -1 },
+    { stored: 24 },
+    { stored: 1.5 },
+    { stored: "not a number" },
+    { storageBlocked: true },
+    { storageAbsent: true },
+  ]) {
+    for (const randomWord of [0, 4294967295]) {
+      const h = fixture(notes, { compositions, randomWord, ...options });
+      const selected = Number(h.api.getState().seed.split(":")[1]);
+      assert.equal(selected, randomWord === 0 ? 1 : 2);
+    }
+  }
+});
+
+test("an empty or missing catalog selects the renderer's fallback garden", () => {
+  const notes = { to: "", from: "", messages: ["Note."] };
+  for (const compositions of [[], null]) {
+    const h = fixture(notes, {
+      compositions,
+      stored: 1,
+      randomWord: 4294967295,
+    });
+    assert.equal(Number(h.api.getState().seed.split(":")[1]), 1);
+  }
 });
 
 test("only a marked review iframe can choose a fixed garden", () => {

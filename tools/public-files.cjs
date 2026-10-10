@@ -1,6 +1,8 @@
 "use strict";
 
 // Only these files enter the public site. Keep development tools outside this list.
+// Add your images, fonts, styles, or scripts here. Use paths from the project root.
+// Remove an entry when you remove that file. Keep the notices for fonts you use.
 module.exports = Object.freeze([
   "index.html",
   "notes.js",

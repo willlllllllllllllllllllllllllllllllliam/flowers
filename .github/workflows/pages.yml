@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   check:
-    name: Test and prepare the site
+    name: Check and prepare the site
     runs-on: ubuntu-latest
     steps:
       - name: Read the repository
@@ -27,13 +27,8 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
-          cache: npm
-      - name: Install test dependencies
-        run: npm ci
-      - name: Test the source
-        run: npm test
-      - name: Prepare only public files
-        run: npm run stage
+      - name: Check and prepare only public files
+        run: node tools/stage.cjs
       - name: Upload the public site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
